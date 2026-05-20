@@ -1,15 +1,7 @@
 // app/page.jsx
-"use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import IndexPage from "./index/page";
 
 export default function Home() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.replace("/index");
-  }, []);
-
-  return null;
+  return <IndexPage />;
 }
