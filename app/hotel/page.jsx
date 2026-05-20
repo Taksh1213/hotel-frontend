@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import API from "../../services/api";
 import Link from "next/link";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 
 export default function Hotels() {
   const [hotels, setHotels] = useState([]);
