@@ -34,10 +34,6 @@ export default function HotelsPage() {
     }
   };
 
-  const getImageUrl = (hotel) => {
-    return normalizeImageUrl(hotel.images[0]);
-  };
-
   const filteredHotels = hotels.filter((hotel) =>
     hotel.name?.toLowerCase().includes(search.toLowerCase()) ||
     hotel.location?.toLowerCase().includes(search.toLowerCase())
