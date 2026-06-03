@@ -189,6 +189,7 @@ export default function HotelDetail() {
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"
                       className="object-cover hover:scale-110 transition"
+                      priority={rooms.indexOf(room) < 3}
                     />
 
                     <div className="absolute top-3 right-3 bg-indigo-600 text-white px-4 py-1 rounded-full text-sm shadow">

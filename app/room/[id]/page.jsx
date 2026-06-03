@@ -8,8 +8,10 @@ import {
   useState
 } from "react";
 
+import Image from "next/image";
 import API from "@/services/api";
-
+import { normalizeImageUrl } from "@/utils/image";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import Header from "@/components/Header";
 
 import Footer from "@/components/Footer";
@@ -246,19 +248,7 @@ export default function BookingPage() {
         <Header />
 
         <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
-
-          <div className="text-center">
-
-            <div className="animate-spin rounded-full h-14 w-14 border-b-4 border-blue-600 mx-auto"></div>
-
-            <p className="mt-4 text-gray-600 dark:text-gray-300">
-
-              Loading Room...
-
-            </p>
-
-          </div>
-
+          <LoadingSpinner text="Loading Room..." />
         </div>
 
         <Footer />
@@ -295,7 +285,7 @@ export default function BookingPage() {
     <>
       <Header />
 
-      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100 dark:from-gray-950 dark:via-gray-900 dark:to-slate-950 py-8 sm:py-10 px-4 sm:px-5 transition-colors">
+      <main className="min-h-screen bg-linear-to-br from-blue-50 via-white to-indigo-100 dark:from-gray-950 dark:via-gray-900 dark:to-slate-950 py-8 sm:py-10 px-4 sm:px-5 transition-colors">
 
         <div className="max-w-7xl mx-auto">
 
@@ -309,6 +299,18 @@ export default function BookingPage() {
           >
             Back
           </button>
+
+          {/* ROOM IMAGE SECTION */}
+          <div className="relative h-64 sm:h-80 w-full rounded-2xl overflow-hidden shadow-lg mb-8">
+            <Image
+              src={room.image ? normalizeImageUrl(room.image) || "/noimage.jpg" : "/noimage.jpg"}
+              alt={room.type || "Room"}
+              fill
+              sizes="100vw"
+              priority
+              className="object-cover"
+            />
+          </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
 
@@ -537,7 +539,7 @@ export default function BookingPage() {
 
                     ? "bg-gray-400 cursor-not-allowed"
 
-                    : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-90"
+                    : "bg-linear-to-r from-blue-600 to-indigo-600 hover:opacity-90"
                 }`}
               >
                 {

@@ -140,12 +140,13 @@ export default function ProfilePage() {
             {/* Profile Image */}
             <div className="flex flex-col items-center">
               {preview ? (
-                <div className="relative w-32 h-32 rounded-full overflow-hidden mb-2 border">
+                <div className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden mb-2 border-4 border-blue-500 shrink-0">
                   <Image
                     src={preview}
                     alt="Profile"
                     fill
                     className="object-cover"
+                    priority
                   />
                 </div>
               ) : (

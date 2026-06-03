@@ -97,6 +97,7 @@ export default function HotelsPage() {
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
                     className="object-cover"
+                    priority={index < 3}
                   />
                 </div>
 
