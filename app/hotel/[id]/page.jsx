@@ -10,6 +10,7 @@ import Footer from "../../../components/Footer";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { normalizeImageUrl } from "@/utils/image";
+import { blurDataURL } from "@/utils/imageLoader";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function HotelDetail() {
@@ -116,12 +117,15 @@ export default function HotelDetail() {
       <main className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors">
 
         {/* HERO SECTION */}
-        <div className="relative h-[320px] sm:h-[420px] w-full overflow-hidden">
+        <div className="relative h-80 sm:h-105 w-full overflow-hidden">
           <Image
             src={normalizeImageUrl(hotel.images?.[0]) || "/noimage.jpg"}
             alt={hotel.name || "Hotel"}
             fill
             sizes="100vw"
+            priority
+            placeholder="blur"
+            blurDataURL={blurDataURL}
             className="object-cover"
           />
 
@@ -190,6 +194,9 @@ export default function HotelDetail() {
                       sizes="(max-width: 768px) 100vw, 33vw"
                       className="object-cover hover:scale-110 transition"
                       priority={rooms.indexOf(room) < 3}
+                      placeholder="blur"
+                      blurDataURL={blurDataURL}
+                      loading={rooms.indexOf(room) >= 3 ? "lazy" : "eager"}
                     />
 
                     <div className="absolute top-3 right-3 bg-indigo-600 text-white px-4 py-1 rounded-full text-sm shadow">

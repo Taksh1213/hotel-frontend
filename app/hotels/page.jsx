@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { normalizeImageUrl } from "@/utils/image";
+import { blurDataURL } from "@/utils/imageLoader";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function HotelsPage() {
@@ -98,6 +99,9 @@ export default function HotelsPage() {
                     sizes="(max-width: 768px) 100vw, 33vw"
                     className="object-cover"
                     priority={index < 3}
+                    placeholder="blur"
+                    blurDataURL={blurDataURL}
+                    loading={index >= 3 ? "lazy" : "eager"}
                   />
                 </div>
 

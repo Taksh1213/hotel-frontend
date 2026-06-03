@@ -9,6 +9,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/context/AuthContext";
 import { normalizeImageUrl } from "@/utils/image";
+import { blurDataURL } from "@/utils/imageLoader";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function ProfilePage() {
@@ -147,6 +148,8 @@ export default function ProfilePage() {
                     fill
                     className="object-cover"
                     priority
+                    placeholder="blur"
+                    blurDataURL={blurDataURL}
                   />
                 </div>
               ) : (

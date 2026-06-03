@@ -11,6 +11,7 @@ import {
 import Image from "next/image";
 import API from "@/services/api";
 import { normalizeImageUrl } from "@/utils/image";
+import { blurDataURL } from "@/utils/imageLoader";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Header from "@/components/Header";
 
@@ -308,6 +309,8 @@ export default function BookingPage() {
               fill
               sizes="100vw"
               priority
+              placeholder="blur"
+              blurDataURL={blurDataURL}
               className="object-cover"
             />
           </div>

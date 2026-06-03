@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { normalizeImageUrl } from "@/utils/image";
+import { blurDataURL } from "@/utils/imageLoader";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function Home() {
@@ -71,6 +72,8 @@ export default function Home() {
               priority
               className="object-cover object-center"
               sizes="100vw"
+              placeholder="blur"
+              blurDataURL={blurDataURL}
             />
           </div>
           <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/40 to-black/70"></div>
@@ -179,6 +182,9 @@ export default function Home() {
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
                       priority={index < 2}
+                      placeholder="blur"
+                      blurDataURL={blurDataURL}
+                      loading={index >= 2 ? "lazy" : "eager"}
                     />
                     <div className="absolute top-4 right-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold shadow-md">
                     <span className="text-gray-900 dark:text-white">₹{hotel.pricePerNight}</span>
