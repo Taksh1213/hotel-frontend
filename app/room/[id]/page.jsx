@@ -1,103 +1,291 @@
+
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+
+import {
+  useEffect,
+  useState
+} from "react";
+
 import API from "@/services/api";
+
 import Header from "@/components/Header";
+
 import Footer from "@/components/Footer";
 
 export default function BookingPage() {
-  const { id } = useParams();
-  const router = useRouter();
 
-  const [room, setRoom] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { id } =
+  useParams();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [guests, setGuests] = useState(1);
-  const [checkIn, setCheckIn] = useState("");
-  const [checkOut, setCheckOut] = useState("");
+  const router =
+  useRouter();
 
-  const [totalNights, setTotalNights] = useState(0);
-  const [totalAmount, setTotalAmount] = useState(0);
+  const [room, setRoom] =
+  useState(null);
 
-  /* FETCH ROOM */
+  const [loading, setLoading] =
+  useState(true);
+
+  const [bookedDates, setBookedDates] =
+  useState([]);
+
+  const [name, setName] =
+  useState("");
+
+  const [email, setEmail] =
+  useState("");
+
+  const [phone, setPhone] =
+  useState("");
+
+  const [guests, setGuests] =
+  useState(1);
+
+  const [checkIn, setCheckIn] =
+  useState("");
+
+  const [checkOut, setCheckOut] =
+  useState("");
+
+  const [totalNights, setTotalNights] =
+  useState(0);
+
+  const [totalAmount, setTotalAmount] =
+  useState(0);
+
+  /* ===============================
+     FETCH ROOM + BOOKINGS
+  =============================== */
 
   useEffect(() => {
+
     if (!id) return;
 
-    const fetchRoom = async () => {
+    const fetchData =
+    async () => {
+
       try {
-        const res = await API.get(`/rooms/${id}`);
-        setRoom(res.data);
+
+        /* ROOM */
+
+        const roomRes =
+        await API.get(
+          `/rooms/${id}`
+        );
+
+        setRoom(roomRes.data);
+
+        /* ROOM BOOKINGS */
+
+        const bookingRes =
+        await API.get(
+          `/bookings/room/${id}`
+        );
+
+        setBookedDates(
+          bookingRes.data
+        );
+
       } catch (error) {
+
         console.log(error);
+
       } finally {
+
         setLoading(false);
+
       }
+
     };
 
-    fetchRoom();
+    fetchData();
+
   }, [id]);
 
-  /* CALCULATE TOTAL */
+  /* ===============================
+     CALCULATE TOTAL
+  =============================== */
 
   useEffect(() => {
-    if (!checkIn || !checkOut || !room) {
+
+    if (
+      !checkIn ||
+      !checkOut ||
+      !room
+    ) {
+
       setTotalNights(0);
+
       setTotalAmount(0);
+
       return;
+
     }
 
-    const start = new Date(checkIn);
-    const end = new Date(checkOut);
+    const start =
+    new Date(checkIn);
 
-    const diff = (end - start) / (1000 * 60 * 60 * 24);
-    const nights = diff > 0 ? diff : 0;
+    const end =
+    new Date(checkOut);
+
+    const diff =
+
+      (end - start) /
+
+      (1000 * 60 * 60 * 24);
+
+    const nights =
+    diff > 0 ? diff : 0;
 
     setTotalNights(nights);
-    setTotalAmount(nights * room.price);
-  }, [checkIn, checkOut, room]);
 
-  /* PAYMENT */
+    setTotalAmount(
+      nights * room.price
+    );
 
-  const handlePayment = () => {
-    if (!name || !email || !phone || !checkIn || !checkOut) {
-      alert("Please fill all fields");
+  }, [
+    checkIn,
+    checkOut,
+    room
+  ]);
+
+  /* ===============================
+     CHECK BOOKED DATES
+  =============================== */
+
+  const isDateBooked =
+  () => {
+
+    return bookedDates.some(
+      (booking) => {
+
+        const bookedCheckIn =
+        new Date(
+          booking.checkIn
+        );
+
+        const bookedCheckOut =
+        new Date(
+          booking.checkOut
+        );
+
+        const selectedCheckIn =
+        new Date(checkIn);
+
+        const selectedCheckOut =
+        new Date(checkOut);
+
+        return (
+
+          selectedCheckIn <
+          bookedCheckOut &&
+
+          selectedCheckOut >
+          bookedCheckIn
+
+        );
+
+      }
+    );
+
+  };
+
+  /* ===============================
+     PAYMENT
+  =============================== */
+
+  const handlePayment =
+  () => {
+
+    if (
+
+      !name ||
+      !email ||
+      !phone ||
+      !checkIn ||
+      !checkOut
+
+    ) {
+
+      alert(
+        "Please fill all fields"
+      );
+
       return;
+
     }
 
-    if (room.status === "Booked") {
-      alert("Room already booked!");
+    if (isDateBooked()) {
+
+      alert(
+        "Selected dates are already booked"
+      );
+
       return;
+
     }
 
     router.push(
+
       `/room/${id}/payment?checkIn=${checkIn}&checkOut=${checkOut}&amount=${totalAmount}`
+
     );
+
   };
 
-  /* LOADING */
+  /* ===============================
+     LOADING
+  =============================== */
 
   if (loading) {
+
     return (
       <>
         <Header />
-        <div className="min-h-screen flex items-center justify-center dark:text-white">
-          Loading...
+
+        <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+
+          <div className="text-center">
+
+            <div className="animate-spin rounded-full h-14 w-14 border-b-4 border-blue-600 mx-auto"></div>
+
+            <p className="mt-4 text-gray-600 dark:text-gray-300">
+
+              Loading Room...
+
+            </p>
+
+          </div>
+
         </div>
+
         <Footer />
       </>
     );
   }
 
+  /* ===============================
+     ROOM NOT FOUND
+  =============================== */
+
   if (!room) {
+
     return (
       <>
         <Header />
-        <p className="p-6 text-center dark:text-white">Room not found</p>
+
+        <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+
+          <h1 className="text-3xl font-bold text-red-600">
+
+            Room Not Found
+
+          </h1>
+
+        </div>
+
         <Footer />
       </>
     );
@@ -107,112 +295,264 @@ export default function BookingPage() {
     <>
       <Header />
 
-      <main className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors flex flex-col items-center justify-center p-6">
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100 dark:from-gray-950 dark:via-gray-900 dark:to-slate-950 py-8 sm:py-10 px-4 sm:px-5 transition-colors">
 
-        {/* BACK BUTTON */}
+        <div className="max-w-7xl mx-auto">
 
-        <div className="w-full max-w-2xl mb-4">
+          {/* BACK BUTTON */}
+
           <button
-            onClick={() => router.back()}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
+            onClick={() =>
+              router.back()
+            }
+            className="mb-6 px-5 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-xl shadow hover:shadow-lg transition"
           >
-            ← Back
+            Back
           </button>
-        </div>
 
-        {/* BOOKING CARD */}
+          <div className="grid lg:grid-cols-3 gap-8">
 
-        <div className="w-full max-w-2xl bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg">
+            {/* FORM */}
 
-          <h1 className="text-3xl font-bold mb-4 dark:text-white text-center">
-            Book Room {room.roomNumber}
-          </h1>
+            <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-3xl p-5 sm:p-8 shadow-xl border border-gray-100 dark:border-gray-700">
 
-          <p className="dark:text-gray-300 text-center">Type: {room.type}</p>
+              <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-gray-900 dark:text-white">
 
-          <p className="text-green-600 font-semibold mb-6 text-center">
-            ₹{room.price} / Night
-          </p>
+                Book Room {
+                  room.roomNumber
+                }
 
-          {room.status === "Booked" && (
-            <p className="text-red-600 font-bold mb-4 text-center">
-              This room is already booked
-            </p>
-          )}
+              </h1>
 
-          <div className="space-y-4">
+              <p className="text-gray-500 dark:text-gray-400 mb-8">
 
-            <input
-              type="text"
-              placeholder="Full Name"
-              className="w-full border p-3 rounded dark:bg-gray-700 dark:text-white"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+                Fill your booking details
 
-            <input
-              type="email"
-              placeholder="Email"
-              className="w-full border p-3 rounded dark:bg-gray-700 dark:text-white"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+              </p>
 
-            <input
-              type="tel"
-              placeholder="Phone Number"
-              className="w-full border p-3 rounded dark:bg-gray-700 dark:text-white"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
+              <div className="grid md:grid-cols-2 gap-5">
 
-            <input
-              type="number"
-              min="1"
-              placeholder="Number of Guests"
-              className="w-full border p-3 rounded dark:bg-gray-700 dark:text-white"
-              value={guests}
-              onChange={(e) => setGuests(e.target.value)}
-            />
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  value={name}
+                  onChange={(e)=>
+                    setName(
+                      e.target.value
+                    )
+                  }
+                  className="border p-4 rounded-xl bg-white dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600"
+                />
 
-            <div>
-              <label className="dark:text-gray-300">Check-in</label>
-              <input
-                type="date"
-                className="w-full border p-3 rounded dark:bg-gray-700 dark:text-white"
-                value={checkIn}
-                onChange={(e) => setCheckIn(e.target.value)}
-              />
-            </div>
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e)=>
+                    setEmail(
+                      e.target.value
+                    )
+                  }
+                  className="border p-4 rounded-xl bg-white dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600"
+                />
 
-            <div>
-              <label className="dark:text-gray-300">Check-out</label>
-              <input
-                type="date"
-                className="w-full border p-3 rounded dark:bg-gray-700 dark:text-white"
-                value={checkOut}
-                onChange={(e) => setCheckOut(e.target.value)}
-              />
-            </div>
+                <input
+                  type="tel"
+                  placeholder="Phone"
+                  value={phone}
+                  onChange={(e)=>
+                    setPhone(
+                      e.target.value
+                    )
+                  }
+                  className="border p-4 rounded-xl bg-white dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600"
+                />
 
-            {totalNights > 0 && (
-              <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded text-center">
-                <p className="dark:text-white">Total Nights: {totalNights}</p>
-                <p className="font-bold text-lg dark:text-white">
-                  Total Amount: ₹{totalAmount.toLocaleString()}
-                </p>
+                <input
+                  type="number"
+                  min="1"
+                  placeholder="Guests"
+                  value={guests}
+                  onChange={(e)=>
+                    setGuests(
+                      e.target.value
+                    )
+                  }
+                  className="border p-4 rounded-xl bg-white dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600"
+                />
+
+                {/* CHECK IN */}
+
+                <input
+                  type="date"
+                  min={
+                    new Date()
+                      .toISOString()
+                      .split("T")[0]
+                  }
+                  value={checkIn}
+                  onChange={(e)=>
+                    setCheckIn(
+                      e.target.value
+                    )
+                  }
+                  className={`border p-4 rounded-xl bg-white dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600 ${
+                    checkIn &&
+                    checkOut &&
+                    isDateBooked()
+
+                      ? "border-red-500 bg-red-50 dark:bg-red-950/20"
+
+                      : ""
+                  }`}
+                />
+
+                {/* CHECK OUT */}
+
+                <input
+                  type="date"
+                  min={
+                    checkIn ||
+
+                    new Date()
+                      .toISOString()
+                      .split("T")[0]
+                  }
+                  value={checkOut}
+                  onChange={(e)=>
+                    setCheckOut(
+                      e.target.value
+                    )
+                  }
+                  className={`border p-4 rounded-xl bg-white dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600 ${
+                    checkIn &&
+                    checkOut &&
+                    isDateBooked()
+
+                      ? "border-red-500 bg-red-50 dark:bg-red-950/20"
+
+                      : ""
+                  }`}
+                />
+
               </div>
-            )}
 
-            <button
-              onClick={handlePayment}
-              disabled={room.status === "Booked"}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition disabled:bg-gray-400"
-            >
-              Proceed To Payment
-            </button>
+              {/* BOOKED WARNING */}
+
+              {checkIn &&
+               checkOut &&
+               isDateBooked() && (
+
+                <div className="mt-6 bg-red-100 border border-red-300 text-red-700 px-5 py-4 rounded-xl">
+
+                  ⚠ Selected dates are already booked
+
+                </div>
+
+              )}
+
+            </div>
+
+            {/* SUMMARY */}
+
+            <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-5 sm:p-8 h-fit border border-gray-100 dark:border-gray-700">
+
+              <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
+
+                Booking Summary
+
+              </h2>
+
+              <div className="space-y-4">
+
+                <div className="flex justify-between gap-4 text-gray-700 dark:text-gray-300">
+
+                  <span>Room</span>
+
+                  <strong>
+                    #{room.roomNumber}
+                  </strong>
+
+                </div>
+
+                <div className="flex justify-between gap-4 text-gray-700 dark:text-gray-300">
+
+                  <span>Type</span>
+
+                  <strong>
+                    {room.type}
+                  </strong>
+
+                </div>
+
+                <div className="flex justify-between gap-4 text-gray-700 dark:text-gray-300">
+
+                  <span>Price/Night</span>
+
+                  <strong className="text-green-600">
+
+                    ₹{room.price}
+
+                  </strong>
+
+                </div>
+
+                <hr className="border-gray-200 dark:border-gray-700" />
+
+                <div className="flex justify-between gap-4 text-gray-700 dark:text-gray-300">
+
+                  <span>Total Nights</span>
+
+                  <strong>
+                    {totalNights}
+                  </strong>
+
+                </div>
+
+                <div className="flex justify-between text-xl font-bold text-blue-600">
+
+                  <span>
+                    Total Amount
+                  </span>
+
+                  <span>
+
+                    ₹{
+                      totalAmount.toLocaleString()
+                    }
+
+                  </span>
+
+                </div>
+
+              </div>
+
+              <button
+                onClick={handlePayment}
+                disabled={
+                  isDateBooked()
+                }
+                className={`w-full mt-8 py-4 rounded-xl font-bold text-white transition ${
+                  isDateBooked()
+
+                    ? "bg-gray-400 cursor-not-allowed"
+
+                    : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-90"
+                }`}
+              >
+                {
+                  isDateBooked()
+
+                  ? "Dates Unavailable"
+
+                  : "Proceed To Payment"
+                }
+              </button>
+
+            </div>
 
           </div>
+
         </div>
 
       </main>
@@ -221,3 +561,4 @@ export default function BookingPage() {
     </>
   );
 }
+

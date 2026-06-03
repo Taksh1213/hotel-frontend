@@ -114,10 +114,11 @@ export default function HotelDetail() {
       <main className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors">
 
         {/* HERO SECTION */}
-        <div className="relative h-[420px] w-full overflow-hidden">
+        <div className="relative h-[320px] sm:h-[420px] w-full overflow-hidden">
 
           <img
             src={hotel.images?.[0] || "/noimage.jpg"}
+            alt={hotel.name || "Hotel"}
             className="w-full h-full object-cover"
             onError={(e) => (e.target.src = "/noimage.jpg")}
           />
@@ -125,19 +126,19 @@ export default function HotelDetail() {
           {/* BACK BUTTON */}
           <button
             onClick={() => router.back()}
-            className="absolute top-6 left-6 bg-black/50 backdrop-blur-md text-white px-4 py-2 rounded-lg hover:bg-black/70 transition z-10"
+            className="absolute top-4 sm:top-6 left-4 sm:left-6 bg-black/50 backdrop-blur-md text-white px-4 py-2 rounded-lg hover:bg-black/70 transition z-10"
           >
-            ← Back
+            Back
           </button>
 
           <div className="absolute inset-0 bg-black/50 flex flex-col justify-center items-center text-center text-white p-6">
 
-            <h1 className="text-5xl font-bold mb-3">
+            <h1 className="text-3xl sm:text-5xl font-bold mb-3">
               {hotel.name || "No Name"}
             </h1>
 
             <p className="text-lg">
-              📍 {hotel.location || "Unknown Location"}
+              {hotel.location || "Unknown Location"}
             </p>
 
             <p className="text-2xl mt-3 font-semibold text-emerald-400">
@@ -148,7 +149,7 @@ export default function HotelDetail() {
         </div>
 
         {/* HOTEL DESCRIPTION */}
-        <div className="max-w-6xl mx-auto p-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 py-10">
 
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-10">
             <h2 className="text-2xl font-bold mb-4 dark:text-white">
@@ -170,7 +171,7 @@ export default function HotelDetail() {
               No rooms available
             </p>
           ) : (
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
 
               {rooms.map((room) => (
                 <div
@@ -186,6 +187,7 @@ export default function HotelDetail() {
                           ? `${BASE_URL}/uploads/${room.image}`
                           : "/noimage.jpg"
                       }
+                      alt={room.type || "Hotel room"}
                       className="w-full h-full object-cover hover:scale-110 transition"
                       onError={(e) => (e.target.src = "/noimage.jpg")}
                     />
@@ -224,7 +226,7 @@ export default function HotelDetail() {
                           filterDate={(date) => !isDateDisabled(date)}
                           minDate={new Date()}
                           placeholderText="Select Booking Date"
-                          className="w-full border p-2 rounded-lg dark:bg-gray-700 dark:text-white"
+                      className="w-full border p-2 rounded-lg bg-white dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600"
                         />
                       </div>
                     )}

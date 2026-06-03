@@ -30,7 +30,7 @@ export default function ContactPage() {
     try {
       await API.post("/contact", form);
 
-      setSuccess("Message sent successfully ✅");
+      setSuccess("Message sent successfully");
 
       setForm({
         name: "",
@@ -49,9 +49,9 @@ export default function ContactPage() {
     <>
       <Header />
 
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center px-4 py-16 transition-colors">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center px-4 py-10 sm:py-16 transition-colors">
 
-        <div className="bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-8 w-full max-w-2xl">
+        <div className="bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-5 sm:p-8 w-full max-w-2xl border border-gray-100 dark:border-gray-700">
 
           {/* Back Button */}
           <button

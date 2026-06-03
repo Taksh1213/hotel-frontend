@@ -7,12 +7,26 @@ const API = axios.create({
   baseURL: BASE_URL,
 });
 
-// ========================
-// Request interceptor: attach token
-// ========================
+const clearAuth = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+};
+
+const redirectToLogin = () => {
+  if (window.location.pathname !== "/login") {
+    window.location.href = "/login";
+  }
+};
+
 API.interceptors.request.use(
   (req) => {
-    const token = localStorage.getItem("accessToken"); // ✅ FIXED TOKEN NAME
+    if (typeof window === "undefined") {
+      return req;
+    }
+
+    const token =
+      localStorage.getItem("token") || localStorage.getItem("accessToken");
 
     if (token) {
       req.headers.Authorization = `Bearer ${token}`;
@@ -23,44 +37,44 @@ API.interceptors.request.use(
   (err) => Promise.reject(err)
 );
 
-// ========================
-// Response interceptor: handle 401 Unauthorized
-// ========================
 API.interceptors.response.use(
   (res) => res,
   async (error) => {
+    if (typeof window === "undefined") {
+      return Promise.reject(error);
+    }
+
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
 
       const refreshToken = localStorage.getItem("refreshToken");
 
       if (!refreshToken) {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        window.location.href = "/login";
+        clearAuth();
+        redirectToLogin();
         return Promise.reject(error);
       }
 
       try {
-        const { data } = await axios.post(
-          `${BASE_URL}/auth/refresh-token`,
-          { token: refreshToken }
-        );
+        const { data } = await axios.post(`${BASE_URL}/auth/refresh-token`, {
+          token: refreshToken,
+        });
 
-        // ✅ save new token
+        localStorage.setItem("token", data.accessToken);
         localStorage.setItem("accessToken", data.accessToken);
 
-        // ✅ retry request
         originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
 
         return axios(originalRequest);
-
       } catch (err) {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        window.location.href = "/login";
+        clearAuth();
+        redirectToLogin();
         return Promise.reject(err);
       }
     }

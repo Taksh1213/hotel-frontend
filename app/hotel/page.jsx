@@ -29,23 +29,23 @@ export default function Hotels() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-gray-100 p-8">
-        <h1 className="text-4xl font-bold mb-6">Explore Hotels</h1>
+      <main className="min-h-screen bg-gray-100 dark:bg-gray-900 p-4 sm:p-8 transition-colors">
+        <h1 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-900 dark:text-white">Explore Hotels</h1>
 
         {/* Search + Filter */}
-        <div className="flex gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <input
             type="text"
             placeholder="Search hotel..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="border p-2 rounded-lg"
+            className="border p-3 rounded-lg bg-white dark:bg-gray-800 dark:text-white border-gray-300 dark:border-gray-700"
           />
 
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="border p-2 rounded-lg"
+            className="border p-3 rounded-lg bg-white dark:bg-gray-800 dark:text-white border-gray-300 dark:border-gray-700"
           >
             <option value="">All Categories</option>
             <option value="Luxury">Luxury</option>
@@ -59,7 +59,7 @@ export default function Hotels() {
           {filteredHotels.map((hotel) => (
             <div
               key={hotel._id}
-              className="bg-white rounded-2xl shadow-md overflow-hidden"
+              className="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden border border-gray-100 dark:border-gray-700"
             >
               <img
                 src={hotel.image}
@@ -68,8 +68,8 @@ export default function Hotels() {
               />
 
               <div className="p-4">
-                <h2 className="text-xl font-bold">{hotel.name}</h2>
-                <p className="text-gray-600">{hotel.category}</p>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">{hotel.name}</h2>
+                <p className="text-gray-600 dark:text-gray-300">{hotel.category}</p>
 
                 <Link
                   href={`/hotel/${hotel._id}`}

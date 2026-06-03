@@ -4,59 +4,82 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300 mt-20">
-
-      <div className="max-w-7xl mx-auto px-6 py-12 grid md:grid-cols-4 gap-8">
-
-        {/* Brand */}
+    <footer className="bg-slate-100 text-slate-700 dark:bg-slate-950 dark:text-slate-300 mt-16 border-t border-slate-200 dark:border-slate-800">
+      <div className="max-w-7xl mx-auto px-6 py-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
         <div>
-          <h2 className="text-2xl font-bold text-white mb-4">
-            🏨 HotelManagement
+          <h2 className="text-2xl font-bold text-slate-950 dark:text-white mb-4">
+            LuxStay
           </h2>
           <p className="text-sm">
-            Book your dream hotel rooms easily with our modern hotel
-            booking platform. Comfortable stays made simple.
+            Book your dream hotel rooms easily with our modern hotel booking
+            platform. Comfortable stays made simple.
           </p>
         </div>
 
-        {/* Quick Links */}
         <div>
-          <h3 className="text-white font-semibold mb-4">Quick Links</h3>
-
+          <h3 className="text-slate-950 dark:text-white font-semibold mb-4">
+            Quick Links
+          </h3>
           <ul className="space-y-2">
-            <li><Link href="/" className="hover:text-white transition">Home</Link></li>
-            <li><Link href="/about" className="hover:text-white transition">About</Link></li>
-            <li><Link href="/contact" className="hover:text-white transition">Contact</Link></li>
-            <li><Link href="/login" className="hover:text-white transition">Login</Link></li>
+            <li>
+              <Link href="/" className="hover:text-blue-600 dark:hover:text-white transition">
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link href="/hotels" className="hover:text-blue-600 dark:hover:text-white transition">
+                Hotels
+              </Link>
+            </li>
+            <li>
+              <Link href="/about" className="hover:text-blue-600 dark:hover:text-white transition">
+                About
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact" className="hover:text-blue-600 dark:hover:text-white transition">
+                Contact
+              </Link>
+            </li>
+            <li>
+              <Link href="/login" className="hover:text-blue-600 dark:hover:text-white transition">
+                Login
+              </Link>
+            </li>
           </ul>
         </div>
 
-        {/* Legal */}
         <div>
-          <h3 className="text-white font-semibold mb-4">Legal</h3>
-
+          <h3 className="text-slate-950 dark:text-white font-semibold mb-4">
+            Legal
+          </h3>
           <ul className="space-y-2">
-            <li><Link href="/privacy" className="hover:text-white transition">Privacy Policy</Link></li>
-            <li><Link href="/terms" className="hover:text-white transition">Terms & Conditions</Link></li>
+            <li>
+              <span className="text-slate-500 dark:text-slate-500">
+                Privacy Policy
+              </span>
+            </li>
+            <li>
+              <span className="text-slate-500 dark:text-slate-500">
+                Terms & Conditions
+              </span>
+            </li>
           </ul>
         </div>
 
-        {/* Contact */}
         <div>
-          <h3 className="text-white font-semibold mb-4">Contact</h3>
-
+          <h3 className="text-slate-950 dark:text-white font-semibold mb-4">
+            Contact
+          </h3>
           <p>Email: support@hotel.com</p>
           <p>Phone: +91 9876543210</p>
           <p>India</p>
         </div>
-
       </div>
 
-      {/* Bottom */}
-      <div className="border-t border-gray-700 text-center py-4 text-sm">
-        © {new Date().getFullYear()} HotelManagement. All rights reserved.
+      <div className="border-t border-slate-200 dark:border-slate-800 text-center py-4 text-sm text-slate-500 dark:text-slate-400">
+        © {new Date().getFullYear()} LuxStay. All rights reserved.
       </div>
-
     </footer>
   );
 }

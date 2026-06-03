@@ -17,8 +17,6 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("token");
@@ -75,10 +73,13 @@ export default function ProfilePage() {
 
       setUser(data);
       setPreview(data.image || preview);
-      setMessage("Profile updated successfully ✅");
+      setMessage("Profile updated successfully");
+      
+      // Dispatch custom event to sync with Header
+      window.dispatchEvent(new Event("profileUpdate"));
     } catch (err) {
       console.error(err);
-      setMessage("Update failed ❌");
+      setMessage("Update failed");
     } finally {
       setLoading(false);
     }
@@ -100,14 +101,14 @@ export default function ProfilePage() {
       <Header />
 
       <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors">
-        <div className="max-w-3xl mx-auto p-6">
+        <div className="max-w-3xl mx-auto p-4 sm:p-6">
 
           {/* Back Button */}
           <button
             onClick={() => router.back()}
             className="mb-4 text-blue-600 dark:text-blue-400 hover:underline"
           >
-            ← Back
+            Back
           </button>
 
           <h1 className="text-3xl font-bold mb-6 text-center text-gray-900 dark:text-white">
@@ -130,7 +131,7 @@ export default function ProfilePage() {
             onSubmit={handleUpdate}
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            className="space-y-5 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg"
+            className="space-y-5 bg-white dark:bg-gray-800 p-5 sm:p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700"
           >
 
             {/* Profile Image */}
@@ -163,7 +164,7 @@ export default function ProfilePage() {
               onChange={handleChange}
               placeholder="Full Name"
               required
-              className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 dark:text-white"
+              className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
 
             {/* Email */}
@@ -174,7 +175,7 @@ export default function ProfilePage() {
               onChange={handleChange}
               placeholder="Email"
               required
-              className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 dark:text-white"
+              className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
 
             {/* Password */}
@@ -184,7 +185,7 @@ export default function ProfilePage() {
               value={form.password}
               onChange={handleChange}
               placeholder="New Password (leave blank to keep current)"
-              className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 dark:text-white"
+              className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
 
             <button

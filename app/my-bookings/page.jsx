@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -9,6 +10,7 @@ import Footer from "@/components/Footer";
 export default function MyBookingsPage() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const router = useRouter();
 
   /* ===============================
@@ -19,17 +21,29 @@ export default function MyBookingsPage() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await API.get("/bookings/my", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await API.get(
+        "/bookings/my",
+        {
+          headers: {
+            Authorization:
+              `Bearer ${token}`,
+          },
+        }
+      );
 
       setBookings(res.data);
+
     } catch (error) {
-      console.error("Error fetching bookings", error);
+
+      console.error(
+        "Error fetching bookings",
+        error
+      );
+
     } finally {
+
       setLoading(false);
+
     }
   };
 
@@ -37,76 +51,145 @@ export default function MyBookingsPage() {
     fetchBookings();
   }, []);
 
-  /* ===============================
-     CANCEL BOOKING
-  =============================== */
 
-  const cancelBooking = async (id) => {
-    const confirmCancel = confirm(
-      "Are you sure you want to cancel this booking?"
+/* ===============================
+   CANCEL BOOKING
+=============================== */
+
+const cancelBooking = async (id) => {
+
+  const confirmCancel =
+  confirm(
+    "Are you sure you want to cancel this booking?"
+  );
+
+  if (!confirmCancel)
+    return;
+
+  try {
+
+    const token =
+    localStorage.getItem(
+      "token"
     );
 
-    if (!confirmCancel) return;
+    await API.delete(
 
-    try {
-      const token = localStorage.getItem("token");
+      `/bookings/cancel/${id}`,
 
-      await API.delete(`/bookings/${id}`, {
+      {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization:
+          `Bearer ${token}`,
         },
-      });
+      }
 
-      alert("Booking cancelled successfully");
+    );
 
-      fetchBookings();
-    } catch (error) {
-      alert("Failed to cancel booking");
-    }
-  };
+    alert(
+      "Booking cancelled successfully"
+    );
+
+    /* REFRESH BOOKINGS */
+
+    fetchBookings();
+
+  } catch (error) {
+
+    console.error(
+      "Cancel booking error:",
+      error
+    );
+
+    alert(
+
+      error.response?.data?.message ||
+
+      "Failed to cancel booking"
+
+    );
+
+  }
+
+};
+
+
 
   /* ===============================
      PAY ONLINE
   =============================== */
 
-  const payOnline = async (booking) => {
-    try {
-      const token = localStorage.getItem("token");
+  const payOnline = async (
+    booking
+  ) => {
 
-      const res = await API.post(
-        "/payment/create-checkout-session",
-        {
-          roomId: booking.room._id,
-          checkIn: booking.checkIn,
-          checkOut: booking.checkOut,
-          amount: booking.totalAmount,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
+    try {
+
+      const token =
+        localStorage.getItem(
+          "token"
+        );
+
+      const res =
+        await API.post(
+          "/payment/create-checkout-session",
+          {
+            roomId:
+              booking.room._id,
+
+            checkIn:
+              booking.checkIn,
+
+            checkOut:
+              booking.checkOut,
+
+            amount:
+              booking.totalAmount,
           },
-        }
-      );
+
+          {
+            headers: {
+              Authorization:
+                `Bearer ${token}`,
+            },
+          }
+        );
 
       if (res.data.url) {
-        window.location.href = res.data.url;
+        window.location.href =
+          res.data.url;
       }
+
     } catch (error) {
-      alert("Payment failed");
+
+      alert(
+        "Payment failed"
+      );
+
     }
   };
 
-  /* ===============================
-     LOADING
-  =============================== */
+  /* LOADING */
 
   if (loading) {
     return (
       <>
         <Header />
-        <div className="min-h-screen flex items-center justify-center dark:text-white">
-          Loading bookings...
+
+        <div className="min-h-screen flex justify-center items-center bg-white dark:bg-gray-900">
+
+          <div className="text-center">
+
+            <div className="animate-spin h-12 w-12 rounded-full border-b-4 border-blue-600 mx-auto"></div>
+
+            <p className="mt-4 text-gray-600 dark:text-gray-300">
+              Loading bookings...
+            </p>
+
+          </div>
+
         </div>
+
         <Footer />
       </>
     );
@@ -116,108 +199,240 @@ export default function MyBookingsPage() {
     <>
       <Header />
 
-      <main className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors p-8">
+      <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-950 dark:via-gray-900 dark:to-slate-950 py-8 sm:py-10 px-4 sm:px-5 transition-colors">
 
-        {/* BACK BUTTON */}
+        <div className="max-w-7xl mx-auto">
 
-        <div className="max-w-5xl mx-auto mb-6">
-          <button
-            onClick={() => router.back()}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
-          >
-            ← Back
-          </button>
-        </div>
+          {/* TOP HEADER */}
 
-        {/* TITLE */}
+          <div className="flex flex-col md:flex-row justify-between md:items-center gap-5 mb-10">
 
-        <h1 className="text-3xl font-bold mb-10 text-center dark:text-white">
-          🛎️ My Bookings
-        </h1>
+            <div>
 
-        {bookings.length === 0 ? (
-          <p className="text-center text-gray-500 dark:text-gray-400">
-            No bookings found.
-          </p>
-        ) : (
-          <div className="grid gap-6 max-w-4xl mx-auto">
+              <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-white">
 
-            {bookings.map((booking) => (
-              <div
-                key={booking._id}
-                className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 border dark:border-gray-700 hover:shadow-2xl transition"
-              >
+                My Bookings
 
-                {/* HEADER */}
+              </h1>
 
-                <div className="flex justify-between items-center mb-3">
-                  <h2 className="text-xl font-semibold dark:text-white">
-                    Room {booking.room?.roomNumber}
-                  </h2>
+              <p className="text-gray-500 dark:text-gray-400 mt-2">
 
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                      booking.paymentStatus === "Paid"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-yellow-100 text-yellow-700"
-                    }`}
-                  >
-                    {booking.paymentStatus || "Pending"}
-                  </span>
-                </div>
+                Manage your hotel reservations
 
-                {/* DETAILS */}
+              </p>
 
-                <p className="text-gray-600 dark:text-gray-300">
-                  Room Type: {booking.room?.type}
-                </p>
+            </div>
 
-                <p className="text-gray-600 dark:text-gray-300">
-                  Check-in: {new Date(booking.checkIn).toLocaleDateString()}
-                </p>
-
-                <p className="text-gray-600 dark:text-gray-300">
-                  Check-out: {new Date(booking.checkOut).toLocaleDateString()}
-                </p>
-
-                <p className="text-gray-800 dark:text-white font-semibold mt-2">
-                  Total: ₹{booking.totalAmount}
-                </p>
-
-                <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-                  Payment Method: {booking.paymentMethod}
-                </p>
-
-                {/* ACTION BUTTONS */}
-
-                <div className="flex gap-3 mt-5 flex-wrap">
-
-                  {booking.paymentStatus !== "Paid" && (
-                    <button
-                      onClick={() => payOnline(booking)}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-                    >
-                      Pay Online
-                    </button>
-                  )}
-
-                  <button
-                    onClick={() => cancelBooking(booking._id)}
-                    className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
-                  >
-                    Cancel Booking
-                  </button>
-
-                </div>
-
-              </div>
-            ))}
+            <button
+              onClick={() =>
+                router.back()
+              }
+              className="md:mt-0 px-6 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-xl shadow hover:shadow-lg"
+            >
+              Back
+            </button>
 
           </div>
-        )}
+
+          {/* TOTAL CARD */}
+
+          <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl mb-10 border border-gray-100 dark:border-gray-700">
+
+            <div className="flex justify-between items-center">
+
+              <div>
+
+                <p className="text-gray-500 dark:text-gray-400">
+
+                  Total Bookings
+
+                </p>
+
+                <h2 className="text-4xl font-bold text-blue-600">
+
+                  {bookings.length}
+
+                </h2>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* EMPTY */}
+
+          {bookings.length === 0 ? (
+
+            <div className="bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-3xl shadow-xl text-center border border-gray-100 dark:border-gray-700">
+
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+
+                No Bookings Found
+
+              </h2>
+
+            </div>
+
+          ) : (
+
+            <div className="grid lg:grid-cols-2 gap-8">
+
+              {bookings.map(
+                (booking) => (
+
+                  <div
+                    key={
+                      booking._id
+                    }
+                    className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden hover:scale-[1.02] transition border border-gray-100 dark:border-gray-700"
+                  >
+
+                    {/* CARD TOP */}
+
+                    <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-5 text-white">
+
+                      <div className="flex justify-between items-center">
+
+                        <h2 className="text-xl font-bold">
+
+                          Room {booking.room?.roomNumber}
+
+                        </h2>
+
+                        <span
+                          className={`px-4 py-1 rounded-full text-sm font-bold ${
+                            booking.paymentStatus === "Paid"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-yellow-100 text-yellow-700"
+                          }`}
+                        >
+                          {booking.paymentStatus || "Pending"}
+                        </span>
+
+                      </div>
+
+                    </div>
+
+                    {/* BODY */}
+
+                    <div className="p-5 sm:p-6 space-y-4">
+
+                      <div className="flex justify-between gap-4">
+
+                        <span className="text-gray-500">
+                          Room Type
+                        </span>
+
+                        <strong className="text-gray-900 dark:text-white">
+                          {booking.room?.type}
+                        </strong>
+
+                      </div>
+
+                      <div className="flex justify-between gap-4">
+
+                        <span className="text-gray-500">
+                          Check In
+                        </span>
+
+                        <strong className="text-gray-900 dark:text-white">
+                          {new Date(
+                            booking.checkIn
+                          ).toLocaleDateString()}
+                        </strong>
+
+                      </div>
+
+                      <div className="flex justify-between gap-4">
+
+                        <span className="text-gray-500">
+                          Check Out
+                        </span>
+
+                        <strong className="text-gray-900 dark:text-white">
+                          {new Date(
+                            booking.checkOut
+                          ).toLocaleDateString()}
+                        </strong>
+
+                      </div>
+
+                      <div className="flex justify-between gap-4">
+
+                        <span className="text-gray-500">
+                          Payment Method
+                        </span>
+
+                        <strong className="text-gray-900 dark:text-white">
+                          {booking.paymentMethod}
+                        </strong>
+
+                      </div>
+
+                      <hr className="border-gray-200 dark:border-gray-700" />
+
+                      <div className="flex justify-between gap-4 items-center text-gray-700 dark:text-gray-300">
+
+                        <span>
+                          Total Amount
+                        </span>
+
+                        <span className="text-2xl font-bold text-green-600">
+
+                          ₹{booking.totalAmount}
+
+                        </span>
+
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row gap-3 pt-4">
+
+                        {booking.paymentStatus !== "Paid" && (
+
+                          <button
+                            onClick={() =>
+                              payOnline(
+                                booking
+                              )
+                            }
+                            className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-bold"
+                          >
+                            Pay Now
+                          </button>
+
+                        )}
+
+                        <button
+                          onClick={() =>
+                            cancelBooking(
+                              booking._id
+                            )
+                          }
+                          className="flex-1 bg-red-500 text-white py-3 rounded-xl font-bold"
+                        >
+                          Cancel
+                        </button>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                )
+              )}
+
+            </div>
+
+          )}
+
+        </div>
+
       </main>
 
       <Footer />
     </>
   );
 }
+

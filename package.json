@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "doctor": "npx react-doctor@latest"
   },
   "dependencies": {
     "@stripe/stripe-js": "^8.8.0",
@@ -20,6 +21,7 @@
     "react-calendar": "^6.0.0",
     "react-datepicker": "^9.1.0",
     "react-dom": "19.2.3",
+    "react-lottie": "^1.2.10",
     "stripe": "^20.4.0"
   },
   "devDependencies": {
@@ -29,6 +31,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "react-doctor": "^0.2.11",
     "tailwindcss": "^4.2.1",
     "typescript": "^5"
   }

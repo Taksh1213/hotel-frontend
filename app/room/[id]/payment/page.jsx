@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useParams, useSearchParams, useRouter } from "next/navigation";
@@ -19,39 +20,62 @@ export default function PaymentPage() {
 
   const checkIn = searchParams.get("checkIn");
   const checkOut = searchParams.get("checkOut");
-  const totalAmountParam = searchParams.get("amount");
-  const totalAmount = totalAmountParam ? parseFloat(totalAmountParam) : 0;
 
-  /* ===============================
-     FETCH ROOM DETAILS
-  =============================== */
+  const totalAmountParam =
+    searchParams.get("amount");
+
+  const totalAmount =
+    totalAmountParam
+      ? parseFloat(totalAmountParam)
+      : 0;
+
+  /* FETCH ROOM */
 
   useEffect(() => {
+
     const fetchRoom = async () => {
       try {
-        const res = await API.get(`/rooms/${roomId}`);
+
+        const res = await API.get(
+          `/rooms/${roomId}`
+        );
+
         setRoom(res.data);
+
       } catch (err) {
-        setError("Failed to load room details");
+
+        setError(
+          "Failed to load room details"
+        );
+
       } finally {
+
         setFetching(false);
+
       }
     };
 
-    if (roomId) fetchRoom();
+    if (roomId) {
+      fetchRoom();
+    }
+
   }, [roomId]);
 
-  /* ===============================
-     STRIPE PAYMENT
-  =============================== */
+  /* STRIPE */
 
   const handleStripePayment = async () => {
+
     try {
-      const token = localStorage.getItem("token");
+
+      const token =
+        localStorage.getItem("token");
 
       if (!token) {
+
         alert("Please login first");
+
         router.push("/login");
+
         return;
       }
 
@@ -59,47 +83,56 @@ export default function PaymentPage() {
 
       const res = await API.post(
         "/payment/create-checkout-session",
+
         {
           roomId,
           checkIn,
           checkOut,
           amount: totalAmount,
         },
+
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization:
+              `Bearer ${token}`,
           },
         }
       );
 
       if (res.data.url) {
-        window.location.href = res.data.url;
-      } else {
-        alert("Payment URL not received");
+        window.location.href =
+          res.data.url;
       }
+
     } catch (err) {
-      alert(err.response?.data?.message || "Payment failed");
+
+      alert(
+        err.response?.data?.message ||
+        "Payment failed"
+      );
+
     } finally {
+
       setLoading(false);
+
     }
   };
 
-  /* ===============================
-     PAY AT HOTEL
-  =============================== */
+  /* PAY HOTEL */
 
   const handlePayAtHotel = async () => {
+
     try {
-      const token = localStorage.getItem("token");
+
+      const token =
+        localStorage.getItem("token");
 
       if (!token) {
-        alert("Please login first");
-        router.push("/login");
-        return;
-      }
 
-      if (!checkIn || !checkOut || !totalAmount) {
-        alert("Invalid booking details");
+        alert("Please login first");
+
+        router.push("/login");
+
         return;
       }
 
@@ -107,130 +140,234 @@ export default function PaymentPage() {
 
       await API.post(
         "/bookings",
+
         {
           room: roomId,
           checkIn,
           checkOut,
           totalAmount,
         },
+
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization:
+              `Bearer ${token}`,
           },
         }
       );
 
-      alert("Booking confirmed! Pay at hotel.");
-      router.push("/my-bookings");
+      alert(
+        "Booking confirmed!"
+      );
+
+      router.push(
+        "/my-bookings"
+      );
+
     } catch (err) {
-      alert(err.response?.data?.message || "Booking failed");
+
+      alert(
+        err.response?.data?.message ||
+        "Booking failed"
+      );
+
     } finally {
+
       setHotelLoading(false);
+
     }
   };
 
-  /* ===============================
-     LOADING
-  =============================== */
-
   if (fetching) {
+
     return (
       <>
         <Header />
-        <div className="min-h-screen flex items-center justify-center dark:text-white">
-          Loading room info...
+
+        <div className="min-h-screen flex justify-center items-center bg-white dark:bg-gray-900">
+
+          <div className="text-center">
+
+            <div className="animate-spin rounded-full h-14 w-14 border-b-4 border-blue-600 mx-auto"></div>
+
+            <p className="mt-4 text-gray-600 dark:text-gray-300">
+              Loading...
+            </p>
+
+          </div>
+
         </div>
+
         <Footer />
       </>
     );
   }
-
-  /* ===============================
-     ERROR
-  =============================== */
 
   if (error) {
+
     return (
       <>
         <Header />
-        <div className="min-h-screen flex items-center justify-center">
-          <p className="text-red-500">{error}</p>
+
+        <div className="min-h-screen flex justify-center items-center bg-white dark:bg-gray-900">
+
+          <h1 className="text-red-600 text-2xl">
+
+            {error}
+
+          </h1>
+
         </div>
+
         <Footer />
       </>
     );
   }
-
-  /* ===============================
-     UI
-  =============================== */
 
   return (
     <>
       <Header />
 
-      <main className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-center p-6">
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100 dark:from-gray-950 dark:via-gray-900 dark:to-slate-950 py-8 sm:py-10 px-4 sm:px-5 transition-colors">
 
-        {/* BACK BUTTON */}
+        <div className="max-w-7xl mx-auto">
 
-        <div className="w-full max-w-md mb-4">
           <button
             onClick={() => router.back()}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
+            className="mb-8 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 px-5 py-3 rounded-xl shadow hover:shadow-lg"
           >
-            ← Back
+            Back
           </button>
-        </div>
 
-        {/* PAYMENT CARD */}
+          <div className="grid lg:grid-cols-3 gap-8">
 
-        <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg w-full max-w-md text-center">
+            {/* LEFT */}
 
-          <h1 className="text-3xl font-bold mb-6 dark:text-white">
-            💳 Payment Options
-          </h1>
+            <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-5 sm:p-8 border border-gray-100 dark:border-gray-700">
 
-          {room && (
-            <div className="mb-6 space-y-1">
+              <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-gray-900 dark:text-white">
 
-              <p className="text-gray-700 dark:text-gray-300">
-                Room: {room.roomNumber} ({room.type})
+                Payment Details
+
+              </h1>
+
+              <p className="text-gray-500 dark:text-gray-400 mb-8">
+
+                Review your booking
+
               </p>
 
-              <p className="text-gray-700 dark:text-gray-300">
-                Check-in: {checkIn || "N/A"}
-              </p>
+              {room && (
 
-              <p className="text-gray-700 dark:text-gray-300">
-                Check-out: {checkOut || "N/A"}
-              </p>
+                <div className="space-y-5">
 
-              <p className="text-lg font-semibold text-green-600 mt-2">
-                Total Amount: ₹{totalAmount.toLocaleString()}
-              </p>
+                  <div className="flex justify-between gap-4 border-b border-gray-200 dark:border-gray-700 pb-4 text-gray-700 dark:text-gray-300">
+
+                    <span>
+                      Room Number
+                    </span>
+
+                    <strong>
+                      #{room.roomNumber}
+                    </strong>
+
+                  </div>
+
+                  <div className="flex justify-between gap-4 border-b border-gray-200 dark:border-gray-700 pb-4 text-gray-700 dark:text-gray-300">
+
+                    <span>
+                      Room Type
+                    </span>
+
+                    <strong>
+                      {room.type}
+                    </strong>
+
+                  </div>
+
+                  <div className="flex justify-between gap-4 border-b border-gray-200 dark:border-gray-700 pb-4 text-gray-700 dark:text-gray-300">
+
+                    <span>
+                      Check In
+                    </span>
+
+                    <strong>
+                      {checkIn}
+                    </strong>
+
+                  </div>
+
+                  <div className="flex justify-between gap-4 border-b border-gray-200 dark:border-gray-700 pb-4 text-gray-700 dark:text-gray-300">
+
+                    <span>
+                      Check Out
+                    </span>
+
+                    <strong>
+                      {checkOut}
+                    </strong>
+
+                  </div>
+
+                </div>
+
+              )}
 
             </div>
-          )}
 
-          {/* STRIPE */}
+            {/* RIGHT */}
 
-          <button
-            onClick={handleStripePayment}
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition mb-4"
-          >
-            {loading ? "Processing..." : "Pay Online (Stripe)"}
-          </button>
+            <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-5 sm:p-8 h-fit border border-gray-100 dark:border-gray-700">
 
-          {/* PAY AT HOTEL */}
+              <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
 
-          <button
-            onClick={handlePayAtHotel}
-            disabled={hotelLoading}
-            className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition"
-          >
-            {hotelLoading ? "Booking..." : "Pay at Hotel"}
-          </button>
+                Payment Summary
+
+              </h2>
+
+              <div className="space-y-5">
+
+                <div className="flex justify-between gap-4 text-gray-700 dark:text-gray-300">
+
+                  <span>
+                    Total Amount
+                  </span>
+
+                  <strong className="text-2xl text-green-600">
+
+                    ₹{totalAmount.toLocaleString()}
+
+                  </strong>
+
+                </div>
+
+                <hr className="border-gray-200 dark:border-gray-700" />
+
+                <button
+                  onClick={handleStripePayment}
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-xl font-bold"
+                >
+                  {loading
+                    ? "Processing..."
+                    : "Pay Online"}
+                </button>
+
+                <button
+                  onClick={handlePayAtHotel}
+                  disabled={hotelLoading}
+                  className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-4 rounded-xl font-bold"
+                >
+                  {hotelLoading
+                    ? "Booking..."
+                    : "Pay at Hotel"}
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
 
         </div>
 

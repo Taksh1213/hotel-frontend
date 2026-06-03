@@ -49,8 +49,9 @@ export default function HotelsPage() {
 
       {/* PAGE HEADER */}
 
-      <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-14 text-center">
-        <h1 className="text-4xl font-bold">Browse Hotels</h1>
+      <main className="min-h-screen bg-slate-50 dark:bg-gray-900 transition-colors">
+      <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-12 sm:py-14 text-center px-4">
+        <h1 className="text-3xl sm:text-4xl font-bold">Browse Hotels</h1>
         <p className="mt-2 text-lg text-indigo-100">
           Find the best hotels for your stay
         </p>
@@ -77,7 +78,7 @@ export default function HotelsPage() {
             No hotels found
           </p>
         ) : (
-          <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
 
             {filteredHotels.map((hotel, index) => (
               <motion.div
@@ -86,7 +87,7 @@ export default function HotelsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ scale: 1.05 }}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden"
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700"
               >
 
                 <img
@@ -125,6 +126,7 @@ export default function HotelsPage() {
         )}
 
       </section>
+      </main>
 
       <Footer />
     </>

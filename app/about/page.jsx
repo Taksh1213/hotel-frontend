@@ -12,9 +12,9 @@ export default function AboutPage() {
 
         {/* HERO SECTION */}
 
-        <div className="bg-indigo-600 text-white py-20 text-center">
-          <h1 className="text-5xl font-bold mb-4">About Our Hotel System</h1>
-          <p className="text-lg max-w-2xl mx-auto">
+        <div className="bg-indigo-600 text-white py-16 sm:py-20 text-center px-4">
+          <h1 className="text-3xl sm:text-5xl font-bold mb-4">About LuxStay</h1>
+          <p className="text-base sm:text-lg max-w-2xl mx-auto">
             A modern hotel booking platform designed to make room reservations
             easy, fast, and secure for travelers around the world.
           </p>
@@ -28,8 +28,8 @@ export default function AboutPage() {
 
             <img
               src="/hotel-about.jpg"
-              alt="Hotel"
-              className="rounded-2xl shadow-lg"
+              alt="Hotel lobby"
+              className="rounded-2xl shadow-lg w-full object-cover"
             />
 
             <div>
@@ -64,7 +64,7 @@ export default function AboutPage() {
               Our Features
             </h2>
 
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
 
               <div className="p-6 rounded-xl shadow hover:shadow-lg transition bg-gray-50 dark:bg-gray-700">
                 <h3 className="text-xl font-semibold mb-3 dark:text-white">
@@ -110,7 +110,7 @@ export default function AboutPage() {
             Why Choose Us
           </h2>
 
-          <div className="grid md:grid-cols-3 gap-8 text-center">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 text-center">
 
             <div>
               <h3 className="text-xl font-semibold mb-2 dark:text-white">

@@ -21,7 +21,7 @@ export default function RoomCalendar({ roomId }) {
 
   return (
     <div className="mt-10">
-      <h2 className="text-2xl font-bold mb-4">
+      <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
         Room Availability Calendar
       </h2>
 
@@ -32,11 +32,11 @@ export default function RoomCalendar({ roomId }) {
           {bookings.map((booking) => (
             <div
               key={booking._id}
-              className="p-4 border rounded-lg bg-red-50"
+              className="p-4 border rounded-lg bg-red-50 dark:bg-red-950/20 dark:border-red-900 text-gray-800 dark:text-gray-200"
             >
               <p>
                 <b>Booked:</b>{" "}
-                {new Date(booking.checkIn).toLocaleDateString()} →{" "}
+                {new Date(booking.checkIn).toLocaleDateString()} to{" "}
                 {new Date(booking.checkOut).toLocaleDateString()}
               </p>
 
