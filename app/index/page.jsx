@@ -13,13 +13,24 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const router = useRouter();
 
-  const BASE_URL =
+  const BACKEND_ORIGIN =
     process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
-    "http://localhost:5000";
+    "https://hotel-backend-frrj.onrender.com";
 
   useEffect(() => {
     fetchHotels();
   }, []);
+
+  const normalizeImageUrl = (imagePath) => {
+    if (!imagePath) return "/no-image.png";
+    const path = imagePath.replace(/\\/g, "/");
+    if (path.startsWith("http")) {
+      return path
+        .replace("http://localhost:5000", BACKEND_ORIGIN)
+        .replace("https://localhost:5000", BACKEND_ORIGIN);
+    }
+    return `${BACKEND_ORIGIN}/${path.replace(/^\/+/, "")}`;
+  };
 
   const fetchHotels = async () => {
     try {
@@ -32,9 +43,7 @@ export default function Home() {
 
   const getImageUrl = (hotel) => {
     if (!hotel.images || hotel.images.length === 0) return "/no-image.png";
-    let path = hotel.images[0].replace(/\\/g, "/");
-    if (path.startsWith("http")) return path;
-    return `${BASE_URL}/${path}`;
+    return normalizeImageUrl(hotel.images[0]);
   };
 
   const filteredHotels = hotels.filter((hotel) =>

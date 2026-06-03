@@ -21,7 +21,20 @@ export default function HotelDetail() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [bookedDates, setBookedDates] = useState([]);
 
-  const BASE_URL = "http://localhost:5000";
+  const BACKEND_ORIGIN =
+    process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
+    "https://hotel-backend-frrj.onrender.com";
+
+  const normalizeImageUrl = (imagePath) => {
+    if (!imagePath) return "/noimage.jpg";
+    const path = imagePath.replace(/\\/g, "/");
+    if (path.startsWith("http")) {
+      return path
+        .replace("http://localhost:5000", BACKEND_ORIGIN)
+        .replace("https://localhost:5000", BACKEND_ORIGIN);
+    }
+    return `${BACKEND_ORIGIN}/${path.replace(/^\/+/, "")}`;
+  };
 
   const safeGet = async (url) => {
     try {
@@ -117,7 +130,7 @@ export default function HotelDetail() {
         <div className="relative h-[320px] sm:h-[420px] w-full overflow-hidden">
 
           <img
-            src={hotel.images?.[0] || "/noimage.jpg"}
+            src={normalizeImageUrl(hotel.images?.[0])}
             alt={hotel.name || "Hotel"}
             className="w-full h-full object-cover"
             onError={(e) => (e.target.src = "/noimage.jpg")}
@@ -184,7 +197,7 @@ export default function HotelDetail() {
                     <img
                       src={
                         room.image
-                          ? `${BASE_URL}/uploads/${room.image}`
+                          ? normalizeImageUrl(room.image)
                           : "/noimage.jpg"
                       }
                       alt={room.type || "Hotel room"}
