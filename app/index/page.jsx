@@ -37,10 +37,6 @@ export default function Home() {
     }
   };
 
-  const getImageUrl = (hotel) => {
-    if (!hotel.images || hotel.images.length === 0) return "/no-image.png";
-    return normalizeImageUrl(hotel.images[0]);
-  };
 
 
   const filteredHotels = hotels.filter((hotel) =>
@@ -77,7 +73,7 @@ export default function Home() {
               sizes="100vw"
             />
           </div>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70"></div>
+          <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/40 to-black/70"></div>
         </div>
 
         <motion.div
@@ -90,7 +86,7 @@ export default function Home() {
             Experience Ultimate Luxury
           </span>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-tight drop-shadow-lg">
-            Find Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">Perfect Stay</span>
+            Find Your <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-indigo-300">Perfect Stay</span>
           </h1>
           
           <p className="text-lg md:text-xl text-gray-200 mb-10 max-w-2xl mx-auto font-light drop-shadow-md">
@@ -190,7 +186,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="p-5 flex flex-col flex-grow">
+                <div className="p-5 flex flex-col grow">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white line-clamp-1">
                       {hotel.name}

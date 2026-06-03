@@ -165,8 +165,8 @@ export default function Register() {
       
       {/* ─── DYNAMIC ANIMATED GRADIENT BACKGROUNDS ─── */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[40%] -right-[20%] w-[80%] h-[80%] rounded-full bg-gradient-to-br from-indigo-400/20 to-purple-500/20 blur-[120px] dark:from-indigo-900/10 dark:to-purple-800/10 animate-pulse" style={{ animationDuration: "9s" }} />
-        <div className="absolute -bottom-[40%] -left-[20%] w-[80%] h-[80%] rounded-full bg-gradient-to-tr from-blue-400/20 to-pink-500/20 blur-[120px] dark:from-blue-900/10 dark:to-pink-800/10 animate-pulse" style={{ animationDuration: "11s", animationDelay: "1s" }} />
+        <div className="absolute -top-[40%] -right-[20%] w-[80%] h-[80%] rounded-full bg-linear-to-br from-indigo-400/20 to-purple-500/20 blur-[120px] dark:from-indigo-900/10 dark:to-purple-800/10 animate-pulse" style={{ animationDuration: "9s" }} />
+        <div className="absolute -bottom-[40%] -left-[20%] w-[80%] h-[80%] rounded-full bg-linear-to-tr from-blue-400/20 to-pink-500/20 blur-[120px] dark:from-blue-900/10 dark:to-pink-800/10 animate-pulse" style={{ animationDuration: "11s", animationDelay: "1s" }} />
       </div>
 
       {/* ─── MAIN GLASSMORPHIC CARD ─── */}
@@ -365,7 +365,7 @@ export default function Register() {
               disabled={loading}
               whileHover={{ scale: 1.02, translateY: -1 }}
               whileTap={{ scale: 0.98 }}
-              className="relative w-full overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-4 rounded-2xl font-bold text-sm tracking-wide shadow-xl shadow-blue-500/10 active:shadow-inner transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="relative w-full overflow-hidden bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-4 rounded-2xl font-bold text-sm tracking-wide shadow-xl shadow-blue-500/10 active:shadow-inner transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               {loading ? (
                 <>

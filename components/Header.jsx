@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { normalizeImageUrl } from "@/utils/image";
@@ -74,7 +74,7 @@ export default function Header() {
         {/* LOGO */}
         <Link
           href="/"
-          className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center gap-2"
+          className="text-2xl font-bold bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center gap-2"
         >
           <span className="text-3xl">🏨</span>
           <span className="hidden sm:block">LuxStay</span>
@@ -193,7 +193,7 @@ export default function Header() {
           ) : (
             <Link
               href="/login"
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-xl text-sm font-semibold"
+              className="bg-linear-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-xl text-sm font-semibold"
             >
               Login
             </Link>
@@ -308,7 +308,7 @@ export default function Header() {
                     <Link
                       href="/login"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3.5 rounded-xl font-semibold text-center block transition-all duration-300 shadow-md shadow-blue-500/10 active:scale-[0.99]"
+                      className="w-full bg-linear-to-r from-blue-600 to-indigo-600 text-white px-6 py-3.5 rounded-xl font-semibold text-center block transition-all duration-300 shadow-md shadow-blue-500/10 active:scale-[0.99]"
                     >
                       Login
                     </Link>
