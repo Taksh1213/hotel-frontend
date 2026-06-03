@@ -2,12 +2,15 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import API from "@/services/api";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { normalizeImageUrl } from "@/utils/image";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function HotelDetail() {
   const { id } = useParams();
@@ -21,20 +24,6 @@ export default function HotelDetail() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [bookedDates, setBookedDates] = useState([]);
 
-  const BACKEND_ORIGIN =
-    process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
-    "https://hotel-backend-frrj.onrender.com";
-
-  const normalizeImageUrl = (imagePath) => {
-    if (!imagePath) return "/noimage.jpg";
-    const path = imagePath.replace(/\\/g, "/");
-    if (path.startsWith("http")) {
-      return path
-        .replace("http://localhost:5000", BACKEND_ORIGIN)
-        .replace("https://localhost:5000", BACKEND_ORIGIN);
-    }
-    return `${BACKEND_ORIGIN}/${path.replace(/^\/+/, "")}`;
-  };
 
   const safeGet = async (url) => {
     try {
@@ -88,9 +77,9 @@ export default function HotelDetail() {
     return (
       <>
         <Header />
-        <p className="p-10 text-center text-xl dark:text-white">
-          Loading Hotel...
-        </p>
+        <div className="min-h-[40vh] flex items-center justify-center">
+          <LoadingSpinner text="Loading hotel..." />
+        </div>
         <Footer />
       </>
     );
@@ -128,12 +117,12 @@ export default function HotelDetail() {
 
         {/* HERO SECTION */}
         <div className="relative h-[320px] sm:h-[420px] w-full overflow-hidden">
-
-          <img
-            src={normalizeImageUrl(hotel.images?.[0])}
+          <Image
+            src={normalizeImageUrl(hotel.images?.[0]) || "/noimage.jpg"}
             alt={hotel.name || "Hotel"}
-            className="w-full h-full object-cover"
-            onError={(e) => (e.target.src = "/noimage.jpg")}
+            fill
+            sizes="100vw"
+            className="object-cover"
           />
 
           {/* BACK BUTTON */}
@@ -194,15 +183,12 @@ export default function HotelDetail() {
 
                   <div className="relative h-56 overflow-hidden">
 
-                    <img
-                      src={
-                        room.image
-                          ? normalizeImageUrl(room.image)
-                          : "/noimage.jpg"
-                      }
+                    <Image
+                      src={room.image ? normalizeImageUrl(room.image) || "/noimage.jpg" : "/noimage.jpg"}
                       alt={room.type || "Hotel room"}
-                      className="w-full h-full object-cover hover:scale-110 transition"
-                      onError={(e) => (e.target.src = "/noimage.jpg")}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover hover:scale-110 transition"
                     />
 
                     <div className="absolute top-3 right-3 bg-indigo-600 text-white px-4 py-1 rounded-full text-sm shadow">

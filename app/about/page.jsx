@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -26,11 +27,16 @@ export default function AboutPage() {
 
           <div className="grid md:grid-cols-2 gap-10 items-center">
 
-            <img
-              src="/hotel-about.jpg"
-              alt="Hotel lobby"
-              className="rounded-2xl shadow-lg w-full object-cover"
-            />
+              <div className="relative rounded-2xl overflow-hidden shadow-lg">
+              <Image
+                src="/hotel-about.jpg"
+                alt="Hotel lobby"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover"
+                priority
+              />
+            </div>
 
             <div>
               <h2 className="text-3xl font-bold mb-4 dark:text-white">

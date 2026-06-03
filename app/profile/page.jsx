@@ -1,11 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import API from "@/services/api";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useAuth } from "@/context/AuthContext";
+import { normalizeImageUrl } from "@/utils/image";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -16,6 +20,7 @@ export default function ProfilePage() {
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const { updateAuthUser } = useAuth();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -29,7 +34,7 @@ export default function ProfilePage() {
 
         setUser(data);
         setForm({ name: data.name, email: data.email, password: "" });
-        setPreview(data.image || null);
+        setPreview(data.image ? normalizeImageUrl(data.image) : null);
       } catch (err) {
         console.error("Fetch profile error:", err);
       }
@@ -72,11 +77,9 @@ export default function ProfilePage() {
       });
 
       setUser(data);
-      setPreview(data.image || preview);
+      updateAuthUser(data);
+      setPreview(data.image ? normalizeImageUrl(data.image) : preview);
       setMessage("Profile updated successfully");
-      
-      // Dispatch custom event to sync with Header
-      window.dispatchEvent(new Event("profileUpdate"));
     } catch (err) {
       console.error(err);
       setMessage("Update failed");
@@ -89,9 +92,9 @@ export default function ProfilePage() {
     return (
       <>
         <Header />
-        <p className="text-center mt-20 text-gray-700 dark:text-gray-300">
-          Loading profile...
-        </p>
+        <div className="min-h-[40vh] flex items-center justify-center">
+          <LoadingSpinner text="Loading profile..." />
+        </div>
         <Footer />
       </>
     );
@@ -137,11 +140,14 @@ export default function ProfilePage() {
             {/* Profile Image */}
             <div className="flex flex-col items-center">
               {preview ? (
-                <img
-                  src={preview}
-                  alt="Profile"
-                  className="w-32 h-32 rounded-full object-cover mb-2 border"
-                />
+                <div className="relative w-32 h-32 rounded-full overflow-hidden mb-2 border">
+                  <Image
+                    src={preview}
+                    alt="Profile"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
               ) : (
                 <div className="w-32 h-32 rounded-full bg-gray-200 dark:bg-gray-700 mb-2 flex items-center justify-center text-gray-500">
                   No Image

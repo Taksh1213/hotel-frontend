@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import API from "../../services/api";
 import Link from "next/link";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import { normalizeImageUrl } from "@/utils/image";
 
 export default function Hotels() {
   const [hotels, setHotels] = useState([]);
@@ -61,11 +63,15 @@ export default function Hotels() {
               key={hotel._id}
               className="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden border border-gray-100 dark:border-gray-700"
             >
-              <img
-                src={hotel.image}
-                alt={hotel.name}
-                className="w-full h-48 object-cover"
-              />
+              <div className="relative h-48 w-full">
+                <Image
+                  src={normalizeImageUrl(hotel.image) || "/no-image.png"}
+                  alt={hotel.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover"
+                />
+              </div>
 
               <div className="p-4">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">{hotel.name}</h2>

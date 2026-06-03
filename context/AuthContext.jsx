@@ -3,8 +3,18 @@
 import { createContext, useContext, useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import API from "@/services/api";
+import { normalizeImageUrl } from "@/utils/image";
 
 const AuthContext = createContext(null);
+
+const normalizeUserData = (userData) => {
+  if (!userData) return userData;
+
+  return {
+    ...userData,
+    image: userData.image ? normalizeImageUrl(userData.image) : null,
+  };
+};
 
 // Idle configurations (in milliseconds)
 const IDLE_TIMEOUT = 5 * 60 * 1000; // 5 minutes of total inactivity
@@ -129,13 +139,22 @@ export const AuthProvider = ({ children }) => {
      INITIAL LOGIN / REGISTER HELPER
      ========================================== */
   const initializeAuth = (authToken, userData) => {
+    const normalized = normalizeUserData(userData);
     localStorage.setItem("token", authToken);
-    if (userData) {
-      localStorage.setItem("user", JSON.stringify(userData));
+    if (normalized) {
+      localStorage.setItem("user", JSON.stringify(normalized));
     }
     setToken(authToken);
-    setUser(userData);
+    setUser(normalized);
     startInactivityTracker();
+  };
+
+  const updateAuthUser = (userData) => {
+    const normalized = normalizeUserData(userData);
+    setUser(normalized);
+    if (normalized) {
+      localStorage.setItem("user", JSON.stringify(normalized));
+    }
   };
 
   /* ==========================================
@@ -147,8 +166,9 @@ export const AuthProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${storedToken}` },
       });
       if (data) {
-        setUser(data);
-        localStorage.setItem("user", JSON.stringify(data));
+        const normalized = normalizeUserData(data);
+        setUser(normalized);
+        localStorage.setItem("user", JSON.stringify(normalized));
       }
     } catch (err) {
       console.error("Error fetching user profile:", err);
@@ -175,7 +195,7 @@ export const AuthProvider = ({ children }) => {
 
       setToken(storedToken);
       if (storedUser) {
-        setUser(JSON.parse(storedUser));
+        setUser(normalizeUserData(JSON.parse(storedUser)));
       }
 
       // Fetch fresh profile in background
@@ -233,6 +253,7 @@ export const AuthProvider = ({ children }) => {
         token,
         loading,
         initializeAuth,
+        updateAuthUser,
         logout,
         isIdleWarningOpen,
         idleCountdown,

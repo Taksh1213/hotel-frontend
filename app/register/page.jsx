@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import API from "@/services/api";
 import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Register() {
@@ -16,7 +17,7 @@ export default function Register() {
     if (token) {
       router.push("/");
     }
-  }, [token]);
+  }, [token, router]);
 
   const [form, setForm] = useState({
     name: "",
@@ -225,9 +226,11 @@ export default function Register() {
             <div className="relative group">
               <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex flex-col items-center justify-center cursor-pointer transition-colors hover:border-indigo-500 group-hover:bg-slate-100 dark:group-hover:bg-slate-800/50">
                 {preview ? (
-                  <img
+                  <Image
                     src={preview}
                     alt="Preview"
+                    width={96}
+                    height={96}
                     className="w-full h-full object-cover rounded-full"
                   />
                 ) : (

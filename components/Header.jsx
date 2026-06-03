@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
+import { normalizeImageUrl } from "@/utils/image";
 
 export default function Header() {
   const { user, token, logout } = useAuth();
@@ -14,10 +16,9 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const router = useRouter();
   const pathname = usePathname();
 
-  const profileImage = user?.image || null;
+  const profileImage = user?.image ? normalizeImageUrl(user.image) : null;
   const userName = user?.name || "";
 
   /* =====================
@@ -121,11 +122,14 @@ export default function Header() {
                 className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
                 {profileImage ? (
-                  <img
-                    src={profileImage}
-                    alt="Profile"
-                    className="w-8 h-8 rounded-full object-cover border-2 border-blue-500"
-                  />
+                  <div className="relative h-8 w-8 rounded-full overflow-hidden border-2 border-blue-500">
+                    <Image
+                      src={profileImage}
+                      alt="Profile"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
                 ) : (
                   <span className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 flex items-center justify-center font-bold text-sm border-2 border-blue-500">
                     {userName ? userName.charAt(0).toUpperCase() : "U"}

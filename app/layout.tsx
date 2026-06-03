@@ -45,6 +45,9 @@ export const metadata: Metadata = {
   ],
   creator: "LuxStay",
   publisher: "LuxStay",
+  verification: {
+    google: "0tBrmiGlRZPSHiHcdwV7S8EzxM2Jh-1gA0DI4NEsTDE",
+  },
   applicationName: "LuxStay",
   alternates: {
     canonical: "/",

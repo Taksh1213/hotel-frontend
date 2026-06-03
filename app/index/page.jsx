@@ -2,42 +2,38 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import API from "@/services/api";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { normalizeImageUrl } from "@/utils/image";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function Home() {
   const [hotels, setHotels] = useState([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
-
-  const BACKEND_ORIGIN =
-    process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
-    "https://hotel-backend-frrj.onrender.com";
 
   useEffect(() => {
     fetchHotels();
   }, []);
 
-  const normalizeImageUrl = (imagePath) => {
-    if (!imagePath) return "/no-image.png";
-    const path = imagePath.replace(/\\/g, "/");
-    if (path.startsWith("http")) {
-      return path
-        .replace("http://localhost:5000", BACKEND_ORIGIN)
-        .replace("https://localhost:5000", BACKEND_ORIGIN);
-    }
-    return `${BACKEND_ORIGIN}/${path.replace(/^\/+/, "")}`;
+  const getImageUrl = (hotel) => {
+    if (!hotel.images || hotel.images.length === 0) return "/no-image.png";
+    return normalizeImageUrl(hotel.images[0]) || "/no-image.png";
   };
 
   const fetchHotels = async () => {
     try {
       const res = await API.get("/hotels");
       setHotels(res.data);
+      setLoading(false);
     } catch (err) {
       console.log("Hotel Fetch Error:", err);
+      setLoading(false);
     }
   };
 
@@ -45,6 +41,7 @@ export default function Home() {
     if (!hotel.images || hotel.images.length === 0) return "/no-image.png";
     return normalizeImageUrl(hotel.images[0]);
   };
+
 
   const filteredHotels = hotels.filter((hotel) =>
     hotel.name?.toLowerCase().includes(search.toLowerCase())
@@ -70,15 +67,16 @@ export default function Home() {
       <section className="relative min-h-[85vh] flex items-center justify-center px-4 overflow-hidden">
         {/* Background Image with Parallax Effect */}
         <div className="absolute inset-0 z-0">
-          <img
-            src="/hero.jpg"
-            alt="Luxury Hotel"
-            className="w-full h-full object-cover object-center"
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = "https://images.unsplash.com/photo-1542314831-c6a4d14d8c85?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"; // Fallback beautiful image
-            }}
-          />
+          <div className="relative w-full h-full">
+            <Image
+              src="/hero.jpg"
+              alt="Luxury Hotel"
+              fill
+              priority
+              className="object-cover object-center"
+              sizes="100vw"
+            />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70"></div>
         </div>
 
@@ -162,7 +160,11 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {filteredHotels.length > 0 ? (
+          {loading ? (
+            <div className="col-span-full py-12 text-center">
+              <LoadingSpinner text="Loading hotels..." />
+            </div>
+          ) : filteredHotels.length > 0 ? (
             filteredHotels.slice(0, 8).map((hotel, index) => (
               <motion.div
                 key={hotel._id}
@@ -174,12 +176,15 @@ export default function Home() {
                 className="bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group flex flex-col h-full border border-gray-100 dark:border-gray-700"
               >
                   <div className="relative h-52 sm:h-60 overflow-hidden">
-                  <img
-                    src={getImageUrl(hotel)}
-                    alt={hotel.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute top-4 right-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold shadow-md">
+                    <Image
+                      src={getImageUrl(hotel)}
+                      alt={hotel.name}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      priority={index < 2}
+                    />
+                    <div className="absolute top-4 right-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold shadow-md">
                     <span className="text-gray-900 dark:text-white">₹{hotel.pricePerNight}</span>
                     <span className="text-gray-500 text-xs font-normal"> / night</span>
                   </div>

@@ -1,41 +1,36 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import API from "@/services/api";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { normalizeImageUrl } from "@/utils/image";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function HotelsPage() {
   const [hotels, setHotels] = useState([]);
   const [search, setSearch] = useState("");
-
-  const BACKEND_ORIGIN =
-    process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
-    "https://hotel-backend-frrj.onrender.com";
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchHotels();
   }, []);
 
-  const normalizeImageUrl = (imagePath) => {
-    if (!imagePath) return "/no-image.png";
-    const path = imagePath.replace(/\\/g, "/");
-    if (path.startsWith("http")) {
-      return path
-        .replace("http://localhost:5000", BACKEND_ORIGIN)
-        .replace("https://localhost:5000", BACKEND_ORIGIN);
-    }
-    return `${BACKEND_ORIGIN}/${path.replace(/^\/+/, "")}`;
+  const getImageUrl = (hotel) => {
+    return normalizeImageUrl(hotel.images?.[0]) || "/no-image.png";
   };
 
   const fetchHotels = async () => {
     try {
       const res = await API.get("/hotels");
       setHotels(res.data);
+      setLoading(false);
     } catch (err) {
       console.log("Hotel Fetch Error:", err);
+      setLoading(false);
     }
   };
 
@@ -78,7 +73,11 @@ export default function HotelsPage() {
 
       <section className="py-12 px-4 md:px-6 max-w-7xl mx-auto">
 
-        {filteredHotels.length === 0 ? (
+        {loading ? (
+          <div className="py-12">
+            <LoadingSpinner text="Loading hotels..." />
+          </div>
+        ) : filteredHotels.length === 0 ? (
           <p className="text-center text-gray-500 dark:text-gray-400 text-lg">
             No hotels found
           </p>
@@ -95,11 +94,15 @@ export default function HotelsPage() {
                 className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700"
               >
 
-                <img
-                  src={getImageUrl(hotel)}
-                  alt={hotel.name}
-                  className="w-full h-52 object-cover"
-                />
+                <div className="relative h-52 w-full">
+                  <Image
+                    src={getImageUrl(hotel)}
+                    alt={hotel.name}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover"
+                  />
+                </div>
 
                 <div className="p-4">
 
